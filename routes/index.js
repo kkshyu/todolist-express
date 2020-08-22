@@ -8,10 +8,4 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Todo List", todos });
 });
 
-router.post("/add-todo", function (req, res, next) {
-  Todo.createTodo({ content: req.body.content });
-  const todos = Todo.getTodos()
-  res.render("index", { title: "Todo List", todos });
-});
-
 module.exports = router;

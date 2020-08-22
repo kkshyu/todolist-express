@@ -42,6 +42,14 @@ router.post("/", function (req, res, next) {
   }
 
   const todo = Todo.createTodo({ content: castedBody.content });
+
+  // fire event from Presenter (similar to MVVM)
+  const sse = req.app.get("sse");
+  sse.send({
+    type: "NEW_TODO",
+    data: todo,
+  });
+
   res.send({
     code: "SUCCESS",
     message: "create new todo successfully",
