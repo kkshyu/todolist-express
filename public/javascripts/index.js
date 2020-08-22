@@ -24,7 +24,7 @@ $("#btn-add").click(() => {
 //   $(".todolist").append($("<li>").html(messageData.data.content));
 // });
 
-let ws = new WebSocket("ws://localhost:3000/ws");
+let ws = new WebSocket(`ws://${window.location.host}/ws`);
 ws.onopen = (event) => {
   console.log("open connection", event);
   $("#btn-send-ws").attr("disabled", false);
