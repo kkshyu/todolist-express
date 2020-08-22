@@ -12,10 +12,16 @@ const basicAuth = require("express-basic-auth");
 //   next();
 // };
 
-// basic auth
-const authMiddleware = basicAuth({
-  challenge: true,
-  users: { admin: "admin", guest: "guest" },
+// jwt
+const authMiddleware = jwt({
+  secret: process.env.JWT_SECRET,
+  algorithms: ["HS256"],
 });
+
+// basic auth
+// const authMiddleware = basicAuth({
+//   challenge: true,
+//   users: { admin: "admin", guest: "guest" },
+// });
 
 module.exports = authMiddleware;

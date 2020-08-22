@@ -5,7 +5,8 @@ const Todo = require("../models/Todo");
 /* GET home page. */
 router.get("/", function (req, res, next) {
   const todos = Todo.getTodos();
-  res.render("index", { title: "Todo List", todos });
+  const isLoggedIn = !!req.cookies.token
+  res.render("index", { title: "Todo List", todos, isLoggedIn });
 });
 
 module.exports = router;

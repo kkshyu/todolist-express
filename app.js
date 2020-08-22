@@ -7,6 +7,7 @@ var sassMiddleware = require("node-sass-middleware");
 const SSE = require("express-sse");
 const session = require("express-session");
 var FileStore = require("session-file-store")(session);
+var jwt = require("express-jwt");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
