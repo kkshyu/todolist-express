@@ -1,33 +1,22 @@
 var express = require("express");
 var router = express.Router();
-
-let todos = [
-  { id: 0, content: "sample1", done: false },
-  { id: 1, content: "sample2", done: true },
-  { id: 2, content: "sample3", done: false },
-];
+const yup = require("yup");
+const Todo = require("../models/Todo");
 
 // get all todo items
 router.get("/", (req, res, next) => {
   const query = req.query;
-  const start = parseInt(query.offset) || 0;
-  const end = query.limit ? start + parseInt(query.limit) : todos.length;
-  const filteredTodos = todos.slice(start, end).map((todo) => {
-    if (query.fields) {
-      const filteredTodo = {};
-      query.fields.split(",").forEach((field) => {
-        filteredTodo[field] = todo[field];
-      });
-      return filteredTodo;
-    } else {
-      return todo;
-    }
+  const todos = Todo.getTodos(query.limit, query.offset, query.fields);
+  res.send({
+    code: "SUCCESS",
+    message: "get filtered todolist",
+    result: todos,
   });
-  res.send(filteredTodos);
 });
 
 // delete all todo items
 router.delete("/", (req, res) => {
+  const todos = Todo.getTodos();
   todos = [];
   res.send();
 });
@@ -35,23 +24,41 @@ router.delete("/", (req, res) => {
 // create a new todo
 router.post("/", function (req, res, next) {
   const body = req.body;
-  const todo = {
-    id: Math.max(todos.map((todo) => todo.id)) + 1,
-    content: body.content,
-    done: false,
-  };
-  todos.push(todo);
-  res.send(todos);
+
+  // schema
+  const bodySchema = yup.object({
+    content: yup.string().required(),
+  });
+
+  let castedBody;
+  try {
+    castedBody = bodySchema.validateSync(body);
+  } catch (e) {
+    return res.send({
+      code: "E_INPUT",
+      message: e.toString(),
+      result: null,
+    });
+  }
+
+  const todo = Todo.createTodo({ content: castedBody.content });
+  res.send({
+    code: "SUCCESS",
+    message: "create new todo successfully",
+    result: todo,
+  });
 });
 
 // get specific todo item
 router.get("/:todoId", (req, res, next) => {
   const todoId = req.params.todoId;
+  const todos = Todo.getTodos();
   res.send(todos.filter((todo) => todo.id === todoId)[0]);
 });
 
 // update specific todo item
 router.put("/:todoId", (req, res, next) => {
+  const todos = Todo.getTodos();
   const body = req.body;
   const todoId = req.params.todoId;
   todos[todoId] = {
@@ -63,6 +70,7 @@ router.put("/:todoId", (req, res, next) => {
 
 // delete specific todo item
 router.delete("/:todoId", (req, res) => {
+  const todos = Todo.getTodos();
   const todoId = req.params.todoId;
   todos = [...todos.slice(0, todoId), ...todos.slice(todoId + 1)];
   res.send();
