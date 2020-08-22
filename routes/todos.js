@@ -14,11 +14,11 @@ router.get("/", (req, res, next) => {
   const end = query.limit ? start + parseInt(query.limit) : todos.length;
   const filteredTodos = todos.slice(start, end).map((todo) => {
     if (query.fields) {
-      const fieldTodo = {};
+      const filteredTodo = {};
       query.fields.split(",").forEach((field) => {
-        fieldTodo[field] = todo[field];
+        filteredTodo[field] = todo[field];
       });
-      return fieldTodo;
+      return filteredTodo;
     } else {
       return todo;
     }
@@ -36,7 +36,7 @@ router.delete("/", (req, res) => {
 router.post("/", function (req, res, next) {
   const body = req.body;
   const todo = {
-    id: todos.length,
+    id: Math.max(todos.map((todo) => todo.id)) + 1,
     content: body.content,
     done: false,
   };
@@ -47,7 +47,7 @@ router.post("/", function (req, res, next) {
 // get specific todo item
 router.get("/:todoId", (req, res, next) => {
   const todoId = req.params.todoId;
-  res.send(todos[todoId]);
+  res.send(todos.filter((todo) => todo.id === todoId)[0]);
 });
 
 // update specific todo item
