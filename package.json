@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon --ignore sessions/ ./bin/www"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,6 +17,7 @@
     "morgan": "~1.9.1",
     "node-sass-middleware": "0.11.0",
     "pug": "2.0.0-beta11",
+    "session-file-store": "^1.4.0",
     "yup": "^0.29.3"
   },
   "devDependencies": {

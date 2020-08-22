@@ -6,6 +6,7 @@ var logger = require("morgan");
 var sassMiddleware = require("node-sass-middleware");
 const SSE = require("express-sse");
 const session = require("express-session");
+var FileStore = require("session-file-store")(session);
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -18,9 +19,10 @@ var app = express();
 app.set("trust proxy", 1); // trust first proxy
 app.use(
   session({
+    store: new FileStore({}),
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: { secure: process.env.NODE_ENV === "production" },
   })
 );
