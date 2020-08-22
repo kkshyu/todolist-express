@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const yup = require("yup");
 const Todo = require("../models/Todo");
+const authMiddleware = require("../middlewares/auth");
 
 // get all todo items
 router.get("/", (req, res, next) => {
@@ -22,7 +23,7 @@ router.delete("/", (req, res) => {
 });
 
 // create a new todo
-router.post("/", function (req, res, next) {
+router.post("/", authMiddleware, function (req, res, next) {
   const body = req.body;
 
   // schema
@@ -41,7 +42,9 @@ router.post("/", function (req, res, next) {
     });
   }
 
-  const todo = Todo.createTodo({ content: castedBody.content });
+  const todo = Todo.createTodo({
+    content: `${req.session.email}: ${castedBody.content}`,
+  });
 
   // fire event from Presenter (similar to MVVM)
   const sse = req.app.get("sse");

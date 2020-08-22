@@ -2,6 +2,16 @@ extends layout
 
 block content
   h1= title
+
+  form(action="/auth/login" method="post").form
+    .form-group
+      input.form-control(name="email" required placeholder="email" type="email")
+    .form-group
+      input.form-control(name="password" required placeholder="password" type="password")
+    button.btn.btn-primary(type="submit") 登入
+
+  hr
+
   button#btn-add.mb-3.btn.btn-primary ADD Todo
 
   ul.todolist

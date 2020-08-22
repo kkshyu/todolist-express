@@ -5,12 +5,25 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var sassMiddleware = require("node-sass-middleware");
 const SSE = require("express-sse");
+const session = require("express-session");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var todosRouter = require("./routes/todos");
+var authRouter = require("./routes/auth");
 
 var app = express();
+
+// set session
+app.set("trust proxy", 1); // trust first proxy
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: process.env.NODE_ENV === "production" },
+  })
+);
 
 // initial sse
 const sse = new SSE([{ foo: 1 }, { foo: 2 }]);
@@ -37,6 +50,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/todos", todosRouter);
+app.use("/auth", authRouter);
 app.get("/events", sse.init);
 
 // catch 404 and forward to error handler
